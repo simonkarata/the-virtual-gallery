@@ -1,0 +1,6 @@
+  "Gallery: art_gallery": "/models/art statuejpg.jpg",
+  "Gallery: gallery-room": "/models/gallery-room.glb",
+  "Gallery: The Entryway - Museum Diorama": "/models/The Entryway - Museum Diorama.glb",
+  "Gallery: Town Center": "/models/Town Center.glb",
+  "Gallery: mtv_vma_gallery_2016": "/models/mtv_vma_gallery_2016.glb",
+  "Gallery: the_picture_gallery": "/models/the_picture_gallery.glb",

@@ -1,0 +1,179 @@
+//
+"use client"
+
+import GalleryTitle from "./GalleryTitle";
+import { useGalleryContext } from "@/context/GalleryContext";
+
+export default function GalleryHeader() {
+  const { selectedGallery } = useGalleryContext();
+
+  return (
+    <header className="text-xl font-bold mb-4">
+      <GalleryTitle /> VIRTUAL EXHIBITION
+    </header>
+  );
+}
+//
+"use client"
+
+import { useGalleryContext } from "@/context/GalleryContext";
+
+export default function GalleryTitle() {
+  const { selectedGallery } = useGalleryContext();
+
+  return <span className="capitalize">{selectedGallery || "Select a Gallery"}</span>;
+}
+
+//
+"use client";
+
+import { useGalleryContext } from "@/context/GalleryContext";
+import { useEffect, useState } from "react";
+import TourButton from "./TourButton";
+import modelMap from "@/utils/modelMap";
+
+export default function LoadingLogic() {
+  const { selectedGallery } = useGalleryContext();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (selectedGallery) {
+      setLoading(true);
+      const timeout = setTimeout(() => setLoading(false), 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [selectedGallery]);
+
+  if (!selectedGallery) {
+    return <p className="text-gray-400 text-sm">Select a gallery to preview.</p>;
+  }
+
+  const displayText = loading
+    ? `Loading model: ${selectedGallery}`
+    : `Ready to load model: ${selectedGallery}`;
+
+  return (
+    <>
+      <p className="text-xs text-gray-400">{displayText}</p>
+      {!loading && <TourButton galleryName={selectedGallery} />}
+    </>
+  );
+}
+
+//
+"use client";
+
+import { useGLTF } from "@react-three/drei";
+
+type ModelProps = {
+  modelPath: string;
+};
+
+export default function Model({ modelPath }: ModelProps) {
+  const { scene } = useGLTF(modelPath);
+  return <primitive object={scene} />;
+}
+
+//
+"use client";
+
+import { useState, useEffect, Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import * as THREE from "three";
+import TourComponent from "./TourComponent";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import { motion, AnimatePresence } from "framer-motion";
+import { useGalleryContext } from "@/context/GalleryContext";
+import ModelPreview from "@/components/ModelPreview";
+import PDFDownloadButton from "./PDFDownloadButton";
+import SecureShareButton from "./SecureShareButton";
+
+export default function SideDisplay() {
+  const { selectedGallery, galleryData } = useGalleryContext();
+  const [modelError, setModelError] = useState(false);
+  const [tourStarted, setTourStarted] = useState(false);
+
+  // ✅ Preload model when selected
+  useEffect(() => {
+    if (galleryData?.model) {
+      try {
+        useGLTF.preload(galleryData.model);
+      } catch (error) {
+        console.warn("Preloading failed:", error);
+      }
+    }
+  }, [galleryData]);
+
+  const handleTourClick = () => {
+    setTourStarted(true);
+  };
+
+  if (!selectedGallery || !galleryData) {
+    return <p className="text-teal-700 font-medium">No gallery selected.</p>;
+  }
+
+  return (
+    <div className="w-full h-64 relative rounded-md overflow-hidden shadow-md">
+      <AnimatePresence>
+        {!tourStarted && (
+          <motion.div
+            className="absolute bottom-[20%] left-1/2 transform -translate-x-1/2 flex space-x-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            {/* Show preview */}
+            {galleryData.model && !modelError ? (
+              <Canvas
+                camera={{ position: [0, 1.5, 5], fov: 60 }}
+                dpr={[1, 1.5]}
+                gl={{
+                  antialias: false,
+                  powerPreference: "low-power",
+                  toneMapping: THREE.NoToneMapping,
+                }}
+                shadows={false}
+              >
+                <ambientLight intensity={0.6} />
+                <directionalLight position={[0, 4, 5]} intensity={1.2} />
+                <OrbitControls
+                  enablePan={false}
+                  enableZoom={false}
+                  enableRotate={true}
+                  autoRotate
+                  autoRotateSpeed={1}
+                />
+                <Suspense fallback={null}>
+                  <ModelPreview /> {/* ✅ No need for prop; ModelPreview uses context */}
+                </Suspense>
+              </Canvas>
+            ) : (
+              <p className="text-red-500 p-4">Model not found or failed to load.</p>
+            )}
+
+            {/* Buttons */}
+            <div className="flex flex-col items-center space-y-2">
+              <PDFDownloadButton galleryName={selectedGallery} />
+              <SecureShareButton galleryName={selectedGallery} />
+              {/* <button
+                className="mt-2 px-6 py-2 bg-teal-600 text-white rounded-md"
+                onClick={handleTourClick}
+              >
+                Start Tour
+              </button> */}
+              {/* Corrected: use galleryName, not undefined galleryKey */}
+               <TourComponent galleryName={galleryName} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {tourStarted && (
+        <div className="absolute top-0 left-0 w-full h-full bg-gray-900 opacity-80 flex justify-center items-center">
+          <p className="text-white">Full tour experience here!</p>
+        </div>
+      )}
+    </div>
+  );
+}
