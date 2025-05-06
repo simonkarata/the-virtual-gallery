@@ -2,10 +2,7 @@
 
 import Image from 'next/image';
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { useGalleryContext } from '@/context/GalleryContext';
-import { GalleryData } from '@/utils/modelMap';
-import { FaDownload } from 'react-icons/fa';
 import DownloadButton from './DownloadButton';
 import ShareGallery from './ShareGallery';
 
@@ -16,7 +13,6 @@ type Props = {
 
 export default function GalleryCard({ id, data }: Props) {
   const { selectedGallery, setSelectedGallery } = useGalleryContext();
-  const router = useRouter();
   const isSelected = selectedGallery?.title === data.title;
 
   const handleSelect = () => {
