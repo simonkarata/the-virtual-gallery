@@ -5,6 +5,8 @@ import React from 'react';
 import { useGalleryContext } from '@/context/GalleryContext';
 import DownloadButton from './DownloadButton';
 import ShareGallery from './ShareGallery';
+import { GalleryData } from '@/utils/modelMap'; // ✅ FIXED
+
 
 type Props = {
   id: string;

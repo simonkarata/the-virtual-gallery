@@ -8,7 +8,13 @@ export default function GalleryModelPage() {
 
   return (
     <main className="h-screen w-full">
-      <GalleryView />
+      {selectedGallery ? (
+        <GalleryView />
+      ) : (
+        <p className="text-center text-gray-500 mt-10">
+          No gallery selected. Please return to the main page and choose a model.
+        </p>
+      )}
     </main>
   );
 }

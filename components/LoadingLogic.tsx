@@ -3,7 +3,6 @@
 import { useGalleryContext } from "@/context/GalleryContext";
 import { useEffect, useState } from "react";
 import TourButton from "./TourButton";
-import modelMap from "@/utils/modelMap";
 
 export default function LoadingLogic() {
   const { selectedGallery } = useGalleryContext();
@@ -28,7 +27,7 @@ export default function LoadingLogic() {
   return (
     <>
       <p className="text-xs text-gray-400">{displayText}</p>
-      {!loading && <TourButton galleryName={selectedGallery} />}
+      {!loading && <TourButton />}
     </>
   );
 }
