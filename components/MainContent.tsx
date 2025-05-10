@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useRef, useEffect, useState } from "react"
+import { useRef } from "react"
 import GalleryHeader from "./GalleryHeader"
 import GalleryGrid from "./GalleryGrid"
 import { CategoryFilter } from "./CategoryFilter"
@@ -13,20 +13,8 @@ interface MainContentProps {
 }
 
 export default function MainContent({ searchQuery, onSearch, isMobile }: MainContentProps) {
-  const [headerHeight, setHeaderHeight] = useState(0)
-  const [filterHeight, setFilterHeight] = useState(0)
   const headerRef = useRef<HTMLDivElement>(null)
   const filterRef = useRef<HTMLDivElement>(null)
-
-  // Measure component heights
-  useEffect(() => {
-    if (headerRef.current) {
-      setHeaderHeight(headerRef.current.offsetHeight)
-    }
-    if (filterRef.current) {
-      setFilterHeight(filterRef.current.offsetHeight)
-    }
-  }, [isMobile])
 
   const containerStyle: React.CSSProperties = {
     width: "100%",

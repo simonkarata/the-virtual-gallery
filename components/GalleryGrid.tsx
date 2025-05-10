@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useRef, useEffect } from "react"
+import React, { useMemo, useRef } from "react"
 import { useGalleryContext } from "@/context/GalleryContext"
 import modelMap from "@/utils/modelMap"
 import GalleryCard from "./GalleryCard"
@@ -11,36 +11,22 @@ interface GalleryGridProps {
 }
 
 export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps) {
-  const { selectedGallery, selectedCategory } = useGalleryContext()
+  const { selectedCategory } = useGalleryContext()
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [containerWidth, setContainerWidth] = React.useState(0)
-
-  // Update container width on resize
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth)
-      }
-    }
-
-    updateWidth()
-    window.addEventListener("resize", updateWidth)
-    return () => window.removeEventListener("resize", updateWidth)
-  }, [])
 
   // Filter galleries based on search query and category
   const filteredGalleries = useMemo(() => {
     return Object.entries(modelMap).filter(([id, gallery]) => {
-      // Filter by category
       if (selectedCategory !== "all" && id !== selectedCategory) {
         return false
       }
 
-      // Filter by search query
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
-        return gallery.title.toLowerCase().includes(query) || gallery.description.toLowerCase().includes(query)
+        return (
+          gallery.title.toLowerCase().includes(query) ||
+          gallery.description.toLowerCase().includes(query)
+        )
       }
 
       return true
@@ -51,12 +37,10 @@ export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps)
   const groupedGalleries = useMemo(() => {
     const groups: Record<string, string[]> = {}
 
-    // First, create a "Featured" group with all galleries if no search query
     if (!searchQuery) {
       groups["Featured"] = filteredGalleries.slice(0, 6).map(([id]) => id)
     }
 
-    // Group by category
     filteredGalleries.forEach(([id, gallery]) => {
       const category = gallery.category || "Uncategorized"
       if (!groups[category]) {
@@ -72,24 +56,23 @@ export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps)
     const container = carouselRefs.current[category]
     if (!container) return
 
-    // Calculate scroll amount based on card width and container width
     const cardWidth = isMobile ? 160 : 240
     const gap = 16
     const visibleWidth = container.offsetWidth
     const scrollAmount = Math.floor(visibleWidth / (cardWidth + gap)) * (cardWidth + gap)
 
-    if (direction === "left") {
-      container.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: "smooth" })
-    }
+    container.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    })
   }
 
-  // If no galleries match the search
   if (filteredGalleries.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "48px 0" }}>
-        <h3 style={{ fontSize: "20px", fontWeight: 500, marginBottom: "8px" }}>No galleries found</h3>
+        <h3 style={{ fontSize: "20px", fontWeight: 500, marginBottom: "8px" }}>
+          No galleries found
+        </h3>
         <p style={{ color: "#666" }}>Try adjusting your search query</p>
       </div>
     )
@@ -136,8 +119,8 @@ export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps)
   const carouselStyle: React.CSSProperties = {
     display: "flex",
     overflowX: "auto",
-    scrollbarWidth: "none", // Firefox
-    msOverflowStyle: "none", // IE/Edge
+    scrollbarWidth: "none",
+    msOverflowStyle: "none",
     paddingBottom: "12px",
     scrollSnapType: "x mandatory",
   }
@@ -147,7 +130,7 @@ export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps)
     gap: "16px",
   }
 
-  const arrowButtonStyle = (direction: "left" | "right"): React.CSSProperties => ({
+  const arrowButtonStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -161,15 +144,14 @@ export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps)
     boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
     transition: "all 0.2s ease",
     fontSize: "16px",
-  })
+  }
 
-  // Fixed the TypeScript error by using a callback ref pattern
   const setCarouselRef = (category: string) => (el: HTMLDivElement | null) => {
     carouselRefs.current[category] = el
   }
 
   return (
-    <div style={containerStyle} ref={containerRef}>
+    <div style={containerStyle}>
       {Object.entries(groupedGalleries).map(([category, galleryIds]) => (
         <div key={category} style={categoryContainerStyle}>
           <div style={categoryHeaderStyle}>
@@ -177,14 +159,14 @@ export default function GalleryGrid({ searchQuery, isMobile }: GalleryGridProps)
             <div style={arrowsContainerStyle}>
               <button
                 onClick={() => handleScroll(category, "left")}
-                style={arrowButtonStyle("left")}
+                style={arrowButtonStyle}
                 aria-label={`Scroll ${category} left`}
               >
                 ←
               </button>
               <button
                 onClick={() => handleScroll(category, "right")}
-                style={arrowButtonStyle("right")}
+                style={arrowButtonStyle}
                 aria-label={`Scroll ${category} right`}
               >
                 →

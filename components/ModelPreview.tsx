@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useEffect, useState, useRef } from "react"
-import { useRouter } from "next/navigation"
 import { useGalleryContext } from "@/context/GalleryContext"
 import modelMap from "@/utils/modelMap"
 import { Canvas } from "@react-three/fiber"
@@ -10,9 +9,8 @@ import { OrbitControls, Environment, useGLTF } from "@react-three/drei"
 import { Suspense } from "react"
 
 // 3D Model component
-function Model({ url, autoRotate = true }) {
+function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url)
-
   return <primitive object={scene} scale={[1, 1, 1]} position={[0, 0, 0]} />
 }
 
@@ -21,7 +19,6 @@ interface ModelPreviewProps {
 }
 
 export default function ModelPreview({ galleryId }: ModelPreviewProps) {
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const { setSelectedGallery } = useGalleryContext()
   const modelRef = useRef<HTMLDivElement>(null)
@@ -29,18 +26,11 @@ export default function ModelPreview({ galleryId }: ModelPreviewProps) {
 
   // Preload the model
   useEffect(() => {
-    // Simulate model loading
     const timer = setTimeout(() => {
       setLoading(false)
     }, 800)
-
     return () => clearTimeout(timer)
   }, [galleryId, gallery])
-
-  const handleViewModel = () => {
-    setSelectedGallery(galleryId)
-    router.push(`/galleryModel`)
-  }
 
   const containerStyle: React.CSSProperties = {
     width: "100%",
@@ -109,13 +99,13 @@ export default function ModelPreview({ galleryId }: ModelPreviewProps) {
           <Suspense fallback={null}>
             <ambientLight intensity={0.7} />
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-            <Model url={gallery.modelPath} autoRotate={true} />
+            <Model url={gallery.modelPath} />
             <Environment preset="studio" />
             <OrbitControls
               enableZoom={false}
               enablePan={false}
               enableRotate={false}
-              autoRotate={true}
+              autoRotate
               autoRotateSpeed={1}
             />
           </Suspense>
@@ -136,6 +126,7 @@ export default function ModelPreview({ galleryId }: ModelPreviewProps) {
           </>
         )}
       </div>
+
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

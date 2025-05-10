@@ -17,7 +17,6 @@ export default function GalleryHeader({ onSearch, isMobile }: GalleryHeaderProps
   const { selectedGallery, setSelectedGallery } = useGalleryContext()
   const galleryIds = Object.keys(modelMap)
 
-  // Update search query when selected gallery changes
   useEffect(() => {
     if (selectedGallery) {
       const gallery = modelMap[selectedGallery]
@@ -38,7 +37,6 @@ export default function GalleryHeader({ onSearch, isMobile }: GalleryHeaderProps
     if (!galleryIds.length) return
 
     if (!selectedGallery) {
-      // If no gallery is selected, select the last one
       setSelectedGallery(galleryIds[galleryIds.length - 1])
       return
     }
@@ -52,7 +50,6 @@ export default function GalleryHeader({ onSearch, isMobile }: GalleryHeaderProps
     if (!galleryIds.length) return
 
     if (!selectedGallery) {
-      // If no gallery is selected, select the first one
       setSelectedGallery(galleryIds[0])
       return
     }
@@ -62,52 +59,40 @@ export default function GalleryHeader({ onSearch, isMobile }: GalleryHeaderProps
     setSelectedGallery(galleryIds[nextIndex])
   }
 
-  const containerStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    width: "100%",
-    height: "100%",
-  }
-
-  const headerStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: isMobile ? "8px" : "16px",
-    height: "100%",
-  }
-
-  const titleStyle: React.CSSProperties = {
-    fontSize: isMobile ? "18px" : "24px",
-    fontWeight: 700,
-    color: "#333",
-    letterSpacing: "0.05em",
-    textAlign: "center",
-    margin: 0,
-  }
-
-  const searchContainerStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    width: isMobile ? "auto" : "240px",
-  }
-
-  const dividerStyle: React.CSSProperties = {
-    height: "4px",
-    width: "100%",
-    background: "linear-gradient(to right, #6b46c1, #9f7aea)",
-    borderRadius: "2px",
-  }
-
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: isMobile ? "8px" : "16px",
+          height: "100%",
+        }}
+      >
         <ArrowStates onPrevious={handlePrevious} onNext={handleNext} />
 
-        <h1 style={titleStyle}>VIRTUAL EXHIBITIONS</h1>
+        <h1
+          style={{
+            fontSize: isMobile ? "18px" : "24px",
+            fontWeight: 700,
+            color: "#333",
+            letterSpacing: "0.05em",
+            textAlign: "center",
+            margin: 0,
+          }}
+        >
+          VIRTUAL EXHIBITIONS
+        </h1>
 
         <GalleryInput
           value={searchQuery}
@@ -124,7 +109,14 @@ export default function GalleryHeader({ onSearch, isMobile }: GalleryHeaderProps
         />
       </div>
 
-      <div style={dividerStyle} />
+      <div
+        style={{
+          height: "4px",
+          width: "100%",
+          background: "linear-gradient(to right, #6b46c1, #9f7aea)",
+          borderRadius: "2px",
+        }}
+      />
     </div>
   )
 }

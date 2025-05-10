@@ -2,7 +2,6 @@
 
 import type React from "react"
 
-import { useRouter } from "next/navigation"
 import { useGalleryContext } from "@/context/GalleryContext"
 import ModelPreview from "./ModelPreview"
 import TourButton from "./TourButton"
@@ -12,7 +11,6 @@ interface SideContentProps {
 }
 
 export default function SideContent({ isMobile }: SideContentProps) {
-  const router = useRouter()
   const { selectedGallery } = useGalleryContext()
 
   const containerStyle: React.CSSProperties = {
