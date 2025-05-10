@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useEffect, useState, useRef } from "react"
-import { useGalleryContext } from "@/context/GalleryContext"
 import modelMap from "@/utils/modelMap"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Environment, useGLTF } from "@react-three/drei"
