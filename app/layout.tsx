@@ -3,7 +3,7 @@ import { GalleryProvider } from "@/context/GalleryContext"
 import "./globals.css"
 
 export const metadata = {
-  title: "3D Gallery Explorer",
+  title: "3D Virtual Exhibitions",
   description: "Explore interactive 3D gallery models",
 }
 
