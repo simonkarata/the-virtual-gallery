@@ -20,7 +20,6 @@ interface ModelPreviewProps {
 
 export default function ModelPreview({ galleryId }: ModelPreviewProps) {
   const [loading, setLoading] = useState(true)
-  const { setSelectedGallery } = useGalleryContext()
   const modelRef = useRef<HTMLDivElement>(null)
   const gallery = modelMap[galleryId]
 
