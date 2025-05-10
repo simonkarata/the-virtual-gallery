@@ -1,27 +1,44 @@
-'use client';
+"use client"
 
-import { useGalleryContext } from '@/context/GalleryContext';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+interface ArrowStatesProps {
+  onPrevious: () => void
+  onNext: () => void
+}
 
-export default function ArrowStates() {
-  const { navigatePrevious, navigateNext, previousGalleries, nextGalleries } = useGalleryContext();
-
+export default function ArrowStates({ onPrevious, onNext }: ArrowStatesProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
       <button
-        onClick={navigatePrevious}
-        disabled={previousGalleries.length === 0}
-        className="text-2xl text-gray-700 hover:text-gray-900 disabled:opacity-50"
+        onClick={onPrevious}
+        style={{
+          padding: "8px",
+          borderRadius: "50%",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          color: "#555",
+          transition: "background-color 0.3s",
+        }}
+        aria-label="Previous gallery"
       >
-        <FaArrowLeft />
+        ←
       </button>
+
       <button
-        onClick={navigateNext}
-        disabled={nextGalleries.length === 0}
-        className="text-2xl text-gray-700 hover:text-gray-900 disabled:opacity-50"
+        onClick={onNext}
+        style={{
+          padding: "8px",
+          borderRadius: "50%",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          color: "#555",
+          transition: "background-color 0.3s",
+        }}
+        aria-label="Next gallery"
       >
-        <FaArrowRight />
+        →
       </button>
     </div>
-  );
+  )
 }

@@ -1,56 +1,75 @@
-// utils/modelMap.ts
+export interface GalleryData {
+  title: string
+  description: string
+  image: string
+  modelPath: string
+  pdf?: string
+  category?: string
+}
 
-export type GalleryData = {
-  title: string;
-  description: string;
-  image: string;
-  modelPath: string;
-  pdf: string;
-};
+// Define the actual gallery category type based on the keys of modelMap
+export type GalleryCategory = "all" | "modernart" | "classic" | "surreal" | "phenomenal" | "sonder" | "ethereal"
+
+// Category display labels
+export const categoryLabels: Record<GalleryCategory, string> = {
+  all: "All Galleries",
+  modernart: "Modern Art",
+  classic: "Classic",
+  surreal: "Surreal",
+  phenomenal: "Urban",
+  sonder: "Media",
+  ethereal: "Classical",
+}
 
 const modelMap: Record<string, GalleryData> = {
   modernart: {
-    title: "art_gallery",
+    title: "Art Gallery",
     description: "Explore contemporary creativity and styles.",
-    image: "/models/art-gallery-jpg.jpg",
-    modelPath: "/models/art_gallery.glb",
+    image: "/models/artGalleryImg.jpg",
+    modelPath: "/models/artGallery.glb",
     pdf: "/models/galleryData.pdf",
+    category: "Art",
   },
   classic: {
-    title: "gallery-room",
+    title: "Clock Room",
     description: "Step into timeless masterpieces.",
-    image: "/models/gallery-room-jpg.jpg",
-    modelPath: "/models/art_gallery.glb",
+    image: "/models/clockImg.jpg",
+    modelPath: "/models/clock.glb",
     pdf: "/models/galleryData.pdf",
+    category: "Classic",
   },
   surreal: {
     title: "The Entryway - Museum Diorama",
     description: "Dive into dreamlike visual narratives.",
-    image: "/models/the-entryway-museum-diorama.jpg",
-    modelPath: "/models/the-entryway-museum-diorama.glb",
+    image: "/models/theEntrywayMuseumImg.jpg",
+    modelPath: "/models/theEntrywayMuseum.glb",
     pdf: "/models/galleryData.pdf",
+    category: "Surreal",
   },
   phenomenal: {
     title: "Town Center",
     description: "Urban-themed creative display.",
-    image: "/models/town-center.jpg",
-    modelPath: "/models/town-center.glb",
+    image: "/models/townCenterImg.jpg",
+    modelPath: "/models/townCenter.glb",
     pdf: "/models/galleryData.pdf",
+    category: "Urban",
   },
   sonder: {
-    title: "mtv_vma_gallery_2016",
+    title: "MTV VMA Gallery",
     description: "Award-themed media space.",
-    image: "/models/mtv_vma_gallery_2016-jpg.jpg",
-    modelPath: "/models/mtv_vma_gallery_2016.glb",
+    image: "/models/mtvVmaGalleryImg.jpg",
+    modelPath: "/models/mtvVmaGallery.glb",
     pdf: "/models/galleryData.pdf",
+    category: "Media",
   },
   ethereal: {
-    title: "the_picture_gallery",
+    title: "The Picture Gallery",
     description: "Visual storytelling in classical form.",
-    image: "/models/art-gallery-jpg.jpg",
-    modelPath: "/models/the_picture_gallery.glb",
+    image: "/models/thePictureGalleryImg.jpg",
+    modelPath: "/models/thePictureGallery.glb",
     pdf: "/models/galleryData.pdf",
+    category: "Classical",
   },
-};
+}
 
-export default modelMap;
+export default modelMap

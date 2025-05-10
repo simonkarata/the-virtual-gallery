@@ -1,125 +1,89 @@
-'use client';
+"use client"
 
-import { useEffect, useRef, useState } from 'react';
-import modelMap from '@/utils/modelMap';
-import { useGalleryContext } from '@/context/GalleryContext';
+import type React from "react"
+import { useRef } from "react"
 
-type Props = {
-  value: string;
-  onChange: (value: string) => void;
-};
+interface GalleryInputProps {
+  value: string
+  onChange: (value: string) => void
+  onClear?: () => void
+  style?: React.CSSProperties
+}
 
-export default function GalleryInput({ value, onChange }: Props) {
-  const [inputValue, setInputValue] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
-  const { selectedGallery, setSelectedGallery } = useGalleryContext();
+export default function GalleryInput({ value, onChange, onClear, style }: GalleryInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    if (selectedGallery) {
-      setInputValue(selectedGallery.title);
-      onChange(selectedGallery.title);
-      setSuggestions([]);
-    }
-  }, [selectedGallery]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value)
+  }
 
-  const allSlugs = Object.keys(modelMap);
-
-  const validateInput = (input: string) => {
-    const normalized = input.toLowerCase().trim();
-    const slugMatch = allSlugs.find((slug) => slug === normalized);
-    const titleMatch = Object.entries(modelMap).find(
-      ([, data]) => data.title?.toLowerCase().trim() === normalized
-    );
-
-    if (slugMatch) {
-      setSuggestions([]);
-      setSelectedGallery(modelMap[slugMatch]);
-      onChange(modelMap[slugMatch].title);
-    } else if (titleMatch) {
-      setSuggestions([]);
-      setSelectedGallery(titleMatch[1]);
-      onChange(titleMatch[1].title);
+  const handleClear = () => {
+    if (onClear) {
+      onClear()
     } else {
-      const filteredSuggestions = Object.values(modelMap)
-        .map((data) => data.title)
-        .filter((title) =>
-          title?.toLowerCase().startsWith(normalized)
-        )
-        .slice(0, 5) as string[];
-
-      setSuggestions(filteredSuggestions);
-      onChange('');
+      onChange("")
     }
-  };
-
-  useEffect(() => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-
-    if (inputValue.trim() === '') {
-      setSuggestions([]);
-      return;
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
+  }
 
-    debounceTimer.current = setTimeout(() => {
-      validateInput(inputValue);
-    }, 300);
+  const containerStyle: React.CSSProperties = {
+    position: "relative",
+    ...style,
+  }
 
-    return () => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    };
-  }, [inputValue]);
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    paddingLeft: "28px",
+    paddingRight: "28px",
+    fontSize: "14px",
+    border: "1px solid #e2e8f0",
+    borderRadius: "16px",
+    outline: "none",
+    transition: "all 0.2s ease",
+  }
 
-  const handleSuggestionClick = (title: string) => {
-    setInputValue(title);
-    setSuggestions([]);
-    const match = Object.values(modelMap).find(
-      (data) => data.title?.toLowerCase().trim() === title.toLowerCase().trim()
-    );
-    if (match) {
-      setSelectedGallery(match);
-      onChange(match.title);
-    }
-  };
+  const searchIconStyle: React.CSSProperties = {
+    position: "absolute",
+    left: "8px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    color: "#a0aec0",
+    fontSize: "14px",
+  }
 
-  const handleSelect = () => {
-    // Clear input content on any selection
-    setInputValue('');
-    setSuggestions([]);
-    onChange('');
-  };
+  const clearButtonStyle: React.CSSProperties = {
+    position: "absolute",
+    right: "8px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    color: "#a0aec0",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+    display: value ? "block" : "none",
+  }
 
   return (
-    <div className="relative flex flex-col gap-1  max-w-md">
+    <div style={containerStyle}>
+      <span style={searchIconStyle}>🔍</span>
       <input
         ref={inputRef}
         type="text"
-        value={inputValue}
-        onClick={handleSelect}
-        onChange={(e) => setInputValue(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delay to allow click
-        placeholder={isFocused || value ? '' : 'Search exhibitions...'}
-        className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-        size={30}
-        aria-label="Search gallery"
+        placeholder="Search galleries..."
+        style={inputStyle}
+        value={value}
+        onChange={handleChange}
         autoComplete="off"
       />
-      {suggestions.length > 0 && isFocused && (
-        <ul className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-md z-10">
-          {suggestions.map((title) => (
-            <li
-              key={title}
-              className="px-4 py-2 hover:bg-purple-100 cursor-pointer text-sm text-gray-800"
-              onClick={() => handleSuggestionClick(title)}
-            >
-              {title}
-            </li>
-          ))}
-        </ul>
+      {value && (
+        <button style={clearButtonStyle} onClick={handleClear} aria-label="Clear search">
+          ×
+        </button>
       )}
     </div>
-  );
+  )
 }
